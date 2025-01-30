@@ -1,0 +1,74 @@
+import React, {useState, useEffect} from "react";
+import { Link } from "react-router-dom";
+import supabase from "../config/supabaseClient";
+
+const Products = () => {
+
+  const [fetchError, setFetchError] = useState(null);
+  const [products, setProducts] = useState(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const {data, error} = await supabase
+        .from('products')
+        .select();
+
+        if(error){
+          setFetchError('Could not retrieve product list.');
+          setProducts(null);
+          console.log(error);
+        }
+
+        if(data){
+          setProducts(data);
+          setFetchError(null);
+        }
+    }
+    fetchProducts();
+  }, []);
+
+
+
+  const productData = [
+    {
+      title: "Bushhogs",
+      imgSrc: "/photos/bushhog.jpg",
+      altText: "Bushhog",
+      route: "/products/bushhogs",
+    },
+    {
+      title: "Drilling Machines",
+      imgSrc: "/photos/driller.jpeg",
+      altText: "Drilling Machine",
+      route: "/products/drillers",
+    },
+    {
+      title: "Semi Trailers",
+      imgSrc: "/photos/semi.png",
+      altText: "Semi Trailer",
+      route: "/products/semis",
+    },
+  ];
+
+  return (
+    <section className="main-section all">
+      <h1>Products</h1>
+      <section className="market-display">
+        {productData.map((product, index) => (
+          <Link key={index} to={product.route}>
+            <div className="market">
+              <h2>{product.title}</h2>
+              <img
+                className="productImages"
+                src={product.imgSrc}
+                alt={product.altText}
+              />
+            </div>
+          </Link>
+        ))}
+      </section>
+    </section>
+  );
+};
+
+export default Products;
